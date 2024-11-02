@@ -1,0 +1,321 @@
+<script lang="ts">
+
+import {defineComponent} from "vue";
+import {AuthPostBody, AutToken} from "@/models/auth-models";
+import {AuthorizationService} from "@/services/authorization-service";
+import {router} from "@/main";
+
+export default defineComponent({
+  name: "AuthorizationPage",
+  props: ['triggeredAuthorizationIs', 'triggeredRegistrationIs'],
+  data() {
+    return {
+      email: '' as string,
+      password: '' as string,
+      errorIs: false as boolean,
+      authorisationService: new AuthorizationService(),
+      typeInputPassword: 'password' as string,
+    }
+  },
+  methods: {
+    authorizationUser() {
+      const body = new AuthPostBody(this.email, this.password);
+      this.authorisationService.doAuthorizationUser(body).then((res) => {
+        const token =  new AutToken(res.data.accessToken);
+        localStorage.setItem("token", token.accessToken);
+        return this.authorisationService.getInfoUser(token.accessToken);
+      }).then((resSecond) => {
+        if (resSecond) {
+          router.push({name: 'SheetOfNotesPage', query: {...resSecond.data}});
+          this.$emit('triggeredAuthorizationIs');
+        }
+      }).catch(() => {
+        this.errorIs = true;
+      })
+    },
+    changeTypePassword() {
+      console.log('type', this.typeInputPassword);
+      console.log('Boolean', Boolean(this.typeInputPassword === 'password'));
+      if (this.typeInputPassword === 'password') {
+        this.typeInputPassword = 'text';
+      } else {
+        this.typeInputPassword = 'password';
+      }
+      console.log('typeInputPassword', this.typeInputPassword);
+    }
+  },
+})
+</script>
+
+<template>
+  <div class="pop-up">
+    <div class=" authorization">
+      <button class="circle-btn-with-icon" @click="$emit('triggeredAuthorizationIs')">
+        <img src="../../assets/cross.svg" alt="cross"/>
+      </button>
+        <h1 class="title-pop-up">Вход в ваш аккаунт</h1>
+      <div class="content">
+        <form class="form">
+          <div class="field">
+            <label for="title">Email</label>
+            <input v-model="email" placeholder="Введите значение">
+          </div>
+          <div class="field">
+            <label for="title">Пароль</label>
+            <input :type="typeInputPassword" v-model="password" placeholder="Введите пароль">
+            <img class="show-password" src="../../assets/eye.svg" @click="changeTypePassword()" alt="eye"/>
+          </div>
+        </form>
+        <div class="go-registration">
+          <div class="question">
+            <span class="gray">У вас нет аккаунта?</span>
+            <span class="green" @click="$emit('triggeredAuthorizationIs'); $emit('triggeredRegistrationIs')">
+              Зарегистрируйтесь
+            </span>
+          </div>
+          <button class="btn-green btn-authorization" @click="authorizationUser()">Войти</button>
+        </div>
+        <div class="error" v-if="errorIs">Пользователь с таким логином не найден</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style>
+
+.pop-up {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 99;
+  background-color: rgba(10, 31, 56, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.authorization {
+  background: rgba(27, 47, 70, 1);
+  width: 780px;
+  height: 672px;
+  border-radius: 40px;
+  font-family: "Montserrat", sans-serif;
+  text-align: left;
+
+  .circle-btn-with-icon {
+    height: 56px;
+    width: 56px;
+    border-radius: 32px;
+    background: #b1c909;
+    margin-left: 90%;
+    margin-top: 3%;
+
+    button {
+      margin-left: auto;
+      margin-right: 0;
+      border: none;
+    }
+
+    img {
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+  }
+
+  .title-pop-up {
+    color: rgba(255, 255, 255, 1);
+    font-weight: 600;
+    font-size: 48px;
+    line-height: 72px;
+    text-align: center;
+  }
+
+  .content {
+    width: 620px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .form {
+    width: 100%;
+  }
+
+  .field {
+    color: rgba(157, 165, 175, 1);
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 28px;
+    display: block;
+    width: 100%;
+    margin-bottom: 24px;
+
+    label {
+      margin-left: 24px;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 90%;
+      padding: 23px 28px;
+      border-radius: 36px;
+      background-color: rgba(255, 255, 255, 1);
+      border: none;
+    }
+
+    .show-password {
+      position: relative;
+      top: -44px;
+      left: 90%;
+    }
+
+  }
+
+  .go-registration {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .question {
+    display: inline-block;
+  }
+
+  .gray {
+    color: rgba(157, 165, 175, 1);
+    margin-right: 2px;
+  }
+
+  .green {
+    color: rgba(177, 201, 9, 1);
+    font-weight: 700;
+  }
+
+  .btn-green {
+    background-color: rgba(177, 201, 9, 1);
+    border-radius: 32px;
+    color: rgba(255, 255, 255, 1);
+    font-size: 20px;
+    line-height: 32px;
+  }
+
+   .btn-authorization {
+    width: 114px;
+    height: 56px;
+    margin-left: 32%;
+  }
+
+  .error {
+    background-color: rgba(255, 116, 97, 0.1);
+    color: rgba(255, 116, 97, 1);
+    border-radius: 24px;
+    vertical-align: center;
+    padding: 8px 10px;
+    line-height: 28px;
+  }
+}
+
+@media  (1920px <= width) {
+
+}
+
+@media screen and  (1366px <= width < 1920px) {
+
+  .authorization {
+    height: 632px;
+    width: 594px;
+
+    .circle-btn-with-icon {
+      margin-left: 87%;
+      margin-top: 3%;
+    }
+
+    .title-pop-up {
+      width: 450px;
+      text-align: left;
+      margin-right: auto;
+      margin-left: auto;
+      margin-top: 0;
+    }
+
+    .content {
+      width: 482px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .btn-authorization {
+      margin-left: 12%;
+    }
+  }
+}
+
+@media screen and (768px <= width < 1366px) {
+  .authorization {
+    height: 560px;
+    width: 688px;
+
+    .circle-btn-with-icon {
+      margin-left: 86%;
+    }
+
+    .title-pop-up {
+      margin-top: 0;
+    }
+
+    .content {
+      width: 576px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .btn-authorization{
+      margin-left: 26%;
+    }
+  }
+}
+
+@media screen and ( width <= 360px) {
+  .authorization {
+    height: 622px;
+    width: 352px;
+
+    .circle-btn-with-icon {
+      margin-left: 80%;
+    }
+
+    .title-pop-up {
+      margin-top: 0;
+      font-size: 32px;
+      line-height: 36px;
+      text-align: left;
+      width: 300px;
+      margin-left: 20px;
+    }
+
+    .content {
+      width: 320px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .form {
+      width: 90%;
+    }
+
+    .question {
+      margin-top: 96px;
+    }
+
+    .btn-authorization {
+      width: 90%;
+      position: absolute;
+      top: 63%;
+      left: -27%;
+    }
+  }
+}
+</style>
