@@ -14,7 +14,7 @@ jobs:
       - name: Create Node Environment  # Sets up Node.js environment.
         uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: '20.x'
 
       - name: Install Packages and Build Application  # Installs npm packages and builds the Vue.js application.
         run: |
@@ -28,7 +28,7 @@ jobs:
       - name: Build with Jekyll  # Builds the application with Jekyll.
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./src/
+          source: ./dist/
           destination: ./_site
 
       - name: Upload artifact  # Uploads the build artifact.
