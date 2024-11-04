@@ -19,3 +19,10 @@ export class RegistrationResponse {
         this.email = email;
     }
 }
+
+export interface IUserRegistration {
+    data: {
+        id: number;
+        email: string;
+    }
+}

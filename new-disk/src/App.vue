@@ -1,4 +1,4 @@
-<template>
+<template class="montserrat">
   <router-view/>
 </template>
 

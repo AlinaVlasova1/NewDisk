@@ -4,7 +4,6 @@
 import {defineComponent} from "vue";
 import {RegistrationModel} from "@/models/registration-models";
 import {RegistrationService} from "@/services/registration-service";
-import {router} from "@/main";
 
 export default defineComponent({
   name: "RegistrationPage",
@@ -22,27 +21,26 @@ export default defineComponent({
   methods: {
     registrationUser() {
       const body = new RegistrationModel(this.email, this.password, this.passwordRepeat);
-      this.registrationService.doRegistrationUser(body).then((res) => {
-        console.log('res',res);
-        router.push({name: 'SheetOfNotesPage', params: {...res}});
+      this.registrationService.doRegistrationUser(body).then(() => {
+        this.$emit('triggeredAuthorizationIs');
+        this.$emit('triggeredRegistrationIs')
+      }).catch(() => {
+        this.errorIs = true;
       })
     },
     changeTypePassword() {
-      console.log('type', this.typeInputPassword);
-      console.log('Boolean', Boolean(this.typeInputPassword === 'password'));
       if (this.typeInputPassword === 'password') {
         this.typeInputPassword = 'text';
       } else {
         this.typeInputPassword = 'password';
       }
-      console.log('typeInputPassword', this.typeInputPassword);
     }
   },
 })
 </script>
 
 <template>
-  <div class="pop-up">
+  <div class="pop-up montserrat">
     <div class="registration">
       <button class="circle-btn-with-icon" @click="$emit('triggeredRegistrationIs')">
         <img src="../../assets/cross.svg" alt="cross"/>
@@ -56,13 +54,19 @@ export default defineComponent({
           </div>
           <div class="field">
             <label for="title">Пароль</label>
-            <input type="password" v-model="password" placeholder="Введите пароль">
-            <img class="show-password-r" src="../../assets/eye.svg" @click="changeTypePassword()" alt="eye"/>
+            <input :type="typeInputPassword" v-model="password" placeholder="Введите пароль">
+            <img class="show-password-r" v-if="typeInputPassword === 'text'" src="../../assets/eye.svg"
+                 @click="changeTypePassword()" alt="eye"/>
+            <img class="show-password-r"  v-if="typeInputPassword === 'password'"
+                 src="../../assets/crossed_out_eye.svg" @click="changeTypePassword()" alt="crossed_out_eye"/>
           </div>
           <div class="field">
             <label for="title">Пароль ещё раз</label>
-            <input type="password" v-model="passwordRepeat" placeholder="Повторите пароль">
-            <img class="show-password-r" src="../../assets/eye.svg" @click="changeTypePassword()" alt="eye"/>
+            <input :type="typeInputPassword" v-model="passwordRepeat" placeholder="Повторите пароль">
+            <img class="show-password-r" v-if="typeInputPassword === 'text'" src="../../assets/eye.svg"
+                 @click="changeTypePassword()" alt="eye"/>
+            <img class="show-password-r"  v-if="typeInputPassword === 'password'"
+                 src="../../assets/crossed_out_eye.svg" @click="changeTypePassword()" alt="crossed_out_eye"/>
           </div>
         </form>
         <div class="registration-block">
@@ -74,12 +78,18 @@ export default defineComponent({
           </div>
           <button class="btn-green btn-registration" @click="registrationUser()">Зарегистрироваться</button>
         </div>
+        <div class="error" v-if="errorIs">Невалидный email или пароль</div>
       </div>
     </div>
   </div>
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.montserrat {
+  font-family: "Montserrat", serif;
+}
 
 .pop-up {
   position: fixed;
@@ -100,7 +110,6 @@ export default defineComponent({
   width: 780px;
   height: 672px;
   border-radius: 40px;
-  font-family: "Montserrat", sans-serif;
   text-align: left;
 
   .circle-btn-with-icon {
@@ -110,6 +119,7 @@ export default defineComponent({
     background: #b1c909;
     margin-left: 90%;
     margin-top: 3%;
+    border: none;
 
     button {
       margin-left: auto;
@@ -130,6 +140,7 @@ export default defineComponent({
     line-height: 72px;
     text-align: left;
     margin-left: 80px;
+    margin-top: 0;
   }
 
   .content {
@@ -160,6 +171,7 @@ export default defineComponent({
       width: 90%;
       padding: 23px 28px;
       border-radius: 36px;
+      color: rgba(157, 165, 175, 1);
       background-color: rgba(255, 255, 255, 1);
       border: none;
     }
@@ -200,7 +212,18 @@ export default defineComponent({
   .btn-registration {
     width: 267px;
     height: 56px;
-    margin-left: 21%;
+    margin-left: 17%;
+    border: none;
+  }
+
+  .error {
+    background-color: rgba(255, 116, 97, 0.1);
+    color: rgba(255, 116, 97, 1);
+    border-radius: 24px;
+    vertical-align: center;
+    padding: 8px 10px;
+    line-height: 28px;
+    margin-top: 10px;
   }
 }
 
@@ -218,9 +241,7 @@ export default defineComponent({
     .title-pop-up {
       width: 450px;
       text-align: left;
-      margin-right: auto;
-      margin-left: auto;
-      margin-top: 0;
+      margin: 0 auto;
     }
 
     .content {
@@ -230,8 +251,8 @@ export default defineComponent({
     }
 
     .btn-registration {
-      margin-left: 4%;
-      width: 240px;
+      margin-left: 2%;
+      width: 230px;
     }
   }
 }
@@ -256,7 +277,7 @@ export default defineComponent({
     }
 
     .btn-registration {
-      margin-left: 15%;
+      margin-left: 11%;
     }
   }
 
@@ -294,7 +315,7 @@ export default defineComponent({
     }
 
     .question {
-      margin-top: 90px;
+      margin-top: 60px;
       margin-left: 50px;
     }
 
@@ -302,7 +323,7 @@ export default defineComponent({
       width: 90%;
       position: absolute;
       top: 75%;
-      left: -17%;
+      left: -12%;
     }
   }
 

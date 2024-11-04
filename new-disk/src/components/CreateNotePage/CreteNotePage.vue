@@ -11,15 +11,18 @@ export default defineComponent({
     return {
       title: '' as string,
       content: '' as string,
-      noteService: new NoteService()
+      noteService: new NoteService(),
+      disabledBtnIs: false as boolean,
     }
   },
   methods: {
     createNote() {
+      this.disabledBtnIs = true;
       const body = new CreatedNote(this.title, this.content);
       const token = localStorage.getItem('token');
       if (token) {
         this.noteService.createNote(body, token).then(() => {
+          this.disabledBtnIs = false;
           this.$emit('triggeredCreateNoteIs');
           this.$emit('createdNote');
         })
@@ -30,9 +33,10 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="pop-up">
+  <div class="pop-up montserrat">
     <div class="pop-up-inner">
-      <button class="circle-btn-with-icon" @click="$emit('triggeredCreateNoteIs')">
+      <button class="circle-btn-with-icon" @click="$emit('triggeredCreateNoteIs')"
+      :disabled="disabledBtnIs">
         <img src="../../assets/cross.svg" alt="cross"/>
       </button>
       <h1 class="title-pop-up">Добавление заметки</h1>
@@ -52,7 +56,7 @@ export default defineComponent({
         </form>
         <div class="go-registration">
           <button class="btn-green btn-add" @click="createNote()"
-                  :disabled="content.length > 255 || title.length > 100">Добавить</button>
+                  :disabled="content.length > 255 || title.length > 100 || disabledBtnIs">Добавить</button>
         </div>
       </div>
     </div>
@@ -60,6 +64,11 @@ export default defineComponent({
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.montserrat {
+  font-family: "Montserrat", serif;
+}
 
 .pop-up {
   position: fixed;
@@ -80,7 +89,6 @@ export default defineComponent({
   width: 780px;
   height: 852px;
   border-radius: 40px;
-  font-family: "Montserrat", sans-serif;
   text-align: left;
 
   .circle-btn-with-icon {
@@ -90,6 +98,7 @@ export default defineComponent({
     background: #b1c909;
     margin-left: 90%;
     margin-top: 3%;
+    border: none;
 
     button {
       margin-left: auto;
@@ -142,6 +151,7 @@ export default defineComponent({
       padding: 23px 28px;
       border-radius: 36px;
       background-color: rgba(255, 255, 255, 1);
+      color: rgba(157, 165, 175, 1);
       border: none;
     }
 
@@ -151,8 +161,9 @@ export default defineComponent({
       border-radius: 36px;
       background-color: rgba(255, 255, 255, 1);
       border: none;
+      color: rgba(157, 165, 175, 1);
       height: 244px;
-      font-family: "Montserrat", sans-serif;
+      resize: none;
     }
 
     span {
@@ -180,6 +191,7 @@ export default defineComponent({
     width: 150px;
     height: 56px;
     margin-left: 75%;
+    border: none;
   }
 
 }

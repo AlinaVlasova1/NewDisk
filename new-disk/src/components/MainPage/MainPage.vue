@@ -18,7 +18,7 @@ export default defineComponent({
 </script>
 
 <template>
-  <header>
+  <header class="montserrat">
     <div class="header">
       <img class="logo" src="../../assets/logo.svg" alt="logo" />
       <button class="btn" @click="triggeredAuthorizationIs = true">
@@ -27,7 +27,7 @@ export default defineComponent({
       </button>
     </div>
   </header>
-  <div class="main">
+  <div class="main montserrat">
     <div class="main-block-left">
       <h1>Мои <br> заметки</h1>
       <span>Не забывай о важном,<br>храни его в облаке.</span>
@@ -50,6 +50,11 @@ export default defineComponent({
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.montserrat {
+  font-family: "Montserrat", serif;
+}
 
 .header {
   display: flex;
@@ -93,8 +98,9 @@ export default defineComponent({
     }
 
     span {
-      font-size: 16px;
+      font-size: 20px;
       line-height: 32px;
+      font-weight: 500;
       margin-top: auto;
       margin-bottom: auto;
     }
@@ -107,7 +113,6 @@ export default defineComponent({
 
 .main .main-block-left {
   text-align: left;
-  font-family: "Montserrat", sans-serif;
   font-optical-sizing: auto;
   margin-left: 8%;
   align-self : center;
@@ -150,7 +155,6 @@ export default defineComponent({
 
   .main .main-block-left {
     text-align: left;
-    font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;
     margin-left: 8%;
     align-self: center;

@@ -26,7 +26,7 @@ export default defineComponent({
         return this.authorisationService.getInfoUser(token.accessToken);
       }).then((resSecond) => {
         if (resSecond) {
-          router.push({name: 'SheetOfNotesPage', query: {...resSecond.data}});
+          router.push({name: 'SheetOfNotesPage'});
           this.$emit('triggeredAuthorizationIs');
         }
       }).catch(() => {
@@ -34,10 +34,9 @@ export default defineComponent({
       })
     },
     changeTypePassword() {
-      console.log('type', this.typeInputPassword);
-      console.log('Boolean', Boolean(this.typeInputPassword === 'password'));
       if (this.typeInputPassword === 'password') {
         this.typeInputPassword = 'text';
+
       } else {
         this.typeInputPassword = 'password';
       }
@@ -48,13 +47,13 @@ export default defineComponent({
 </script>
 
 <template>
-  <div class="pop-up">
+  <div class="pop-up montserrat">
     <div class=" authorization">
       <button class="circle-btn-with-icon" @click="$emit('triggeredAuthorizationIs')">
         <img src="../../assets/cross.svg" alt="cross"/>
       </button>
-        <h1 class="title-pop-up">Вход в ваш аккаунт</h1>
       <div class="content">
+        <h1 class="title-pop-up">Вход в ваш аккаунт</h1>
         <form class="form">
           <div class="field">
             <label for="title">Email</label>
@@ -63,7 +62,10 @@ export default defineComponent({
           <div class="field">
             <label for="title">Пароль</label>
             <input :type="typeInputPassword" v-model="password" placeholder="Введите пароль">
-            <img class="show-password" src="../../assets/eye.svg" @click="changeTypePassword()" alt="eye"/>
+            <img class="show-password" v-if="typeInputPassword === 'text'" src="../../assets/eye.svg"
+                 @click="changeTypePassword()" alt="eye"/>
+            <img class="show-password"  v-if="typeInputPassword === 'password'"
+                 src="../../assets/crossed_out_eye.svg" @click="changeTypePassword()" alt="crossed_out_eye"/>
           </div>
         </form>
         <div class="go-registration">
@@ -82,6 +84,12 @@ export default defineComponent({
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+.montserrat {
+  font-family: "Montserrat", serif;
+}
+
 
 .pop-up {
   position: fixed;
@@ -102,7 +110,7 @@ export default defineComponent({
   width: 780px;
   height: 672px;
   border-radius: 40px;
-  font-family: "Montserrat", sans-serif;
+  font-family: Montserrat, sans-serif;
   text-align: left;
 
   .circle-btn-with-icon {
@@ -112,11 +120,11 @@ export default defineComponent({
     background: #b1c909;
     margin-left: 90%;
     margin-top: 3%;
+    border: none;
 
     button {
       margin-left: auto;
       margin-right: 0;
-      border: none;
     }
 
     img {
@@ -130,7 +138,7 @@ export default defineComponent({
     font-weight: 600;
     font-size: 48px;
     line-height: 72px;
-    text-align: center;
+    text-align: left;
   }
 
   .content {
@@ -162,6 +170,7 @@ export default defineComponent({
       width: 90%;
       padding: 23px 28px;
       border-radius: 36px;
+      color: rgba(157, 165, 175, 1);
       background-color: rgba(255, 255, 255, 1);
       border: none;
     }
@@ -200,12 +209,13 @@ export default defineComponent({
     color: rgba(255, 255, 255, 1);
     font-size: 20px;
     line-height: 32px;
+    border: none;
   }
 
    .btn-authorization {
     width: 114px;
     height: 56px;
-    margin-left: 32%;
+    margin-left: 21%;
   }
 
   .error {
@@ -216,10 +226,6 @@ export default defineComponent({
     padding: 8px 10px;
     line-height: 28px;
   }
-}
-
-@media  (1920px <= width) {
-
 }
 
 @media screen and  (1366px <= width < 1920px) {
@@ -235,9 +241,6 @@ export default defineComponent({
 
     .title-pop-up {
       width: 450px;
-      text-align: left;
-      margin-right: auto;
-      margin-left: auto;
       margin-top: 0;
     }
 
@@ -247,8 +250,12 @@ export default defineComponent({
       margin-left: auto;
     }
 
+    .question {
+      width: 328px;
+    }
+
     .btn-authorization {
-      margin-left: 12%;
+      margin-left: 8%;
     }
   }
 }
@@ -273,7 +280,7 @@ export default defineComponent({
     }
 
     .btn-authorization{
-      margin-left: 26%;
+      margin-left: 21%;
     }
   }
 }
@@ -291,9 +298,7 @@ export default defineComponent({
       margin-top: 0;
       font-size: 32px;
       line-height: 36px;
-      text-align: left;
       width: 300px;
-      margin-left: 20px;
     }
 
     .content {
@@ -308,13 +313,17 @@ export default defineComponent({
 
     .question {
       margin-top: 96px;
+      font-size: 14px;
+      line-height: 24px;
+      margin-left: 7px;
+      margin-right: auto;
     }
 
     .btn-authorization {
       width: 90%;
       position: absolute;
       top: 63%;
-      left: -27%;
+      left: -17%;
     }
   }
 }
