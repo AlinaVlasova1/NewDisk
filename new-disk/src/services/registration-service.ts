@@ -1,13 +1,13 @@
-import {UrlServices} from "@/services/url-services";
-import {IUserRegistration, RegistrationModel} from "@/models/registration-models";
+import {ApiUrlFactory} from "@/services/api-url-factory";
+import {RegistrationModel} from "@/models/registration-models";
 import axios from "axios";
+import {IUserResponse} from "@/models/auth-models";
 
 export class RegistrationService {
-    urlService = new UrlServices();
-    url  = this.urlService.addPathName('reg');
 
-    doRegistrationUser(body: RegistrationModel): Promise<IUserRegistration> {
+    private readonly url  = ApiUrlFactory.create('reg');
+
+    register(body: RegistrationModel): Promise<IUserResponse> {
         return axios.post(this.url.toString(), body);
     }
-
 }

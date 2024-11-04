@@ -1,4 +1,4 @@
-export class AuthPostBody {
+export class AuthModel {
     email: string;
     password: string;
 
@@ -8,21 +8,13 @@ export class AuthPostBody {
     }
 }
 
-export class AutToken {
-    accessToken: string;
-
-    constructor(accessToken: string) {
-        this.accessToken = accessToken;
-    }
-}
-
-export interface IResponseAuthorization {
+export interface IAuthResponse {
     data: {
         accessToken: string;
     }
 }
 
-export interface IUserInfoAfterAuthorization {
+export interface IUserResponse {
     data: {
         id: number;
         email: string;

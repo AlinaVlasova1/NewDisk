@@ -1,4 +1,4 @@
-export class CreatedNote {
+export class NoteCreationModel {
     title: string;
     content: string;
 
@@ -8,12 +8,12 @@ export class CreatedNote {
     }
 }
 
-export interface IResponseNote {
+export interface INoteResponse {
     id: number;
     title: string;
     content: string;
 }
 
-export interface IResponseNoteData {
-    data: Array<IResponseNote>;
+export interface INoteListResponse {
+    data: Array<INoteResponse>;
 }

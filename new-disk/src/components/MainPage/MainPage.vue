@@ -10,8 +10,8 @@ export default defineComponent({
   components: {RegistrationPage, AuthorizationPage},
   data() {
     return {
-      triggeredAuthorizationIs: false as boolean,
-      triggeredRegistrationIs: false as boolean,
+      isTriggeredAuthorization: false as boolean,
+      isTriggeredRegistration: false as boolean,
     }
   },
 })
@@ -21,7 +21,7 @@ export default defineComponent({
   <header class="montserrat">
     <div class="header">
       <img class="logo" src="../../assets/logo.svg" alt="logo" />
-      <button class="btn" @click="triggeredAuthorizationIs = true">
+      <button class="btn" @click="isTriggeredAuthorization = true">
         <img src="../../assets/arrow_in_circle.svg" alt="arrow_in_circle"/>
         <span>Вход</span>
       </button>
@@ -36,17 +36,17 @@ export default defineComponent({
       <img src="../../assets/board.svg" alt="board"/>
     </div>
   </div>
-  <AuthorizationPage v-if="triggeredAuthorizationIs"
-                     :triggeredAuthorizationIs="triggeredAuthorizationIs"
-                     :triggeredRegistrationIs="triggeredRegistrationIs"
-                     @triggered-authorization-is="triggeredAuthorizationIs = false"
-                     @triggered-registration-is="triggeredRegistrationIs = true"
+  <AuthorizationPage v-if="isTriggeredAuthorization"
+                     :isTriggeredAuthorization="isTriggeredAuthorization"
+                     :isTriggeredRegistration="isTriggeredRegistration"
+                     @is-triggered-authorization="isTriggeredAuthorization = false"
+                     @is-triggered-registration="isTriggeredRegistration = true"
   ></AuthorizationPage>
-  <RegistrationPage v-if="triggeredRegistrationIs"
-                    :triggeredRegistrationIs="triggeredRegistrationIs"
-                    :triggeredAuthorizationIs="triggeredAuthorizationIs"
-                    @triggered-authorization-is="triggeredAuthorizationIs = true"
-                    @triggered-registration-is="triggeredRegistrationIs = false"></RegistrationPage>
+  <RegistrationPage v-if="isTriggeredRegistration"
+                    :isTriggeredRegistration="isTriggeredRegistration"
+                    :isTriggeredAuthorization="isTriggeredAuthorization"
+                    @is-triggered-authorization="isTriggeredAuthorization = true"
+                    @is-triggered-registration="isTriggeredRegistration = false"></RegistrationPage>
 </template>
 
 <style scoped>

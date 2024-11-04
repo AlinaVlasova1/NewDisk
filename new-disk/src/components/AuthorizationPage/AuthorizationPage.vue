@@ -1,46 +1,40 @@
 <script lang="ts">
 
 import {defineComponent} from "vue";
-import {AuthPostBody, AutToken} from "@/models/auth-models";
+import {AuthModel} from "@/models/auth-models";
 import {AuthorizationService} from "@/services/authorization-service";
 import {router} from "@/main";
 
 export default defineComponent({
   name: "AuthorizationPage",
-  props: ['triggeredAuthorizationIs', 'triggeredRegistrationIs'],
+  props: ['isTriggeredAuthorization', 'isTriggeredRegistration'],
   data() {
     return {
       email: '' as string,
       password: '' as string,
-      errorIs: false as boolean,
+      errors: [] as string[],
       authorisationService: new AuthorizationService(),
       typeInputPassword: 'password' as string,
+      isDisabled: false as boolean,
     }
   },
   methods: {
-    authorizationUser() {
-      const body = new AuthPostBody(this.email, this.password);
-      this.authorisationService.doAuthorizationUser(body).then((res) => {
-        const token =  new AutToken(res.data.accessToken);
-        localStorage.setItem("token", token.accessToken);
-        return this.authorisationService.getInfoUser(token.accessToken);
-      }).then((resSecond) => {
-        if (resSecond) {
-          router.push({name: 'SheetOfNotesPage'});
-          this.$emit('triggeredAuthorizationIs');
-        }
-      }).catch(() => {
-        this.errorIs = true;
+    authorize() {
+      this.isDisabled = true;
+      const body = new AuthModel(this.email, this.password);
+      this.authorisationService.authorize(body).then((res) => {
+        const token = res.data.accessToken;
+        localStorage.setItem("token", token);
+        router.push({name: 'SheetOfNotesPage'});
+        this.$emit('isTriggeredAuthorization');
+        this.isDisabled = false;
+      }).catch((err) => {
+        this.errors = err.response.data.message.join(';');
+        this.isDisabled = false;
       })
     },
     changeTypePassword() {
-      if (this.typeInputPassword === 'password') {
-        this.typeInputPassword = 'text';
-
-      } else {
-        this.typeInputPassword = 'password';
-      }
-      console.log('typeInputPassword', this.typeInputPassword);
+      this.typeInputPassword = (this.typeInputPassword === 'password') ? 'text' : 'password';
     }
   },
 })
@@ -49,7 +43,7 @@ export default defineComponent({
 <template>
   <div class="pop-up montserrat">
     <div class=" authorization">
-      <button class="circle-btn-with-icon" @click="$emit('triggeredAuthorizationIs')">
+      <button class="circle-btn-with-icon" @click="$emit('isTriggeredAuthorization')">
         <img src="../../assets/cross.svg" alt="cross"/>
       </button>
       <div class="content">
@@ -71,13 +65,13 @@ export default defineComponent({
         <div class="go-registration">
           <div class="question">
             <span class="gray">У вас нет аккаунта?</span>
-            <span class="green" @click="$emit('triggeredAuthorizationIs'); $emit('triggeredRegistrationIs')">
+            <span class="green" @click="$emit('isTriggeredAuthorization'); $emit('isTriggeredRegistration')">
               Зарегистрируйтесь
             </span>
           </div>
-          <button class="btn-green btn-authorization" @click="authorizationUser()">Войти</button>
+          <button class="btn-green btn-authorization" :disabled="isDisabled" @click="authorize()">Войти</button>
         </div>
-        <div class="error" v-if="errorIs">Пользователь с таким логином не найден</div>
+        <div class="error" v-if="errors.length > 0">{{errors}}</div>
       </div>
     </div>
   </div>

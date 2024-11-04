@@ -1,21 +1,19 @@
-import {UrlServices} from "@/services/url-services";
+import {ApiUrlFactory} from "@/services/api-url-factory";
 import axios from "axios";
 import {
-    AuthPostBody,
-    IResponseAuthorization, IUserInfoAfterAuthorization,
+    AuthModel,
+    IAuthResponse, IUserResponse,
 } from "@/models/auth-models";
 
 export class AuthorizationService {
 
-    urlService = new UrlServices();
-    url  = this.urlService.addPathName('auth');
+    private readonly url= ApiUrlFactory.create('auth');
 
-    doAuthorizationUser(body: AuthPostBody): Promise<IResponseAuthorization> {
-        console.log(this.url.toString());
+    authorize(body: AuthModel): Promise<IAuthResponse> {
         return axios.post(this.url.toString(), body);
     }
 
-    getInfoUser(accessToken: string): Promise<IUserInfoAfterAuthorization> {
-        return axios.get(this.url.toString(), {headers: {Authorization: `Bearer ${accessToken}`}});
+    getInfoUser(): Promise<IUserResponse> {
+        return axios.get(this.url.toString());
     }
 }

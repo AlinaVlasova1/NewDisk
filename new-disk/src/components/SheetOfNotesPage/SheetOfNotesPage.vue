@@ -1,8 +1,8 @@
 <script lang="ts">
 import {defineComponent} from "vue";
-import {NoteService} from "@/services/notes-service";
-import {IResponseNote} from "@/models/note-models";
-import CreateNotePage from "@/components/CreateNotePage/CreteNotePage.vue";
+import {NoteService} from "@/services/note-service";
+import {INoteResponse} from "@/models/note-models";
+import CreateNotePage from "@/components/CreateNotePage/CreateNotePage.vue";
 import {AuthorizationService} from "@/services/authorization-service";
 
 export default defineComponent({
@@ -11,7 +11,7 @@ export default defineComponent({
   data() {
     return {
       email: '' as string,
-      arrDisplayNotes: [] as Array<IResponseNote>,
+      arrDisplayNotes: [] as Array<INoteResponse>,
       notesService: new NoteService(),
       triggeredCreateNoteIs: false as boolean,
       createdNote: false as boolean,
@@ -20,33 +20,22 @@ export default defineComponent({
   },
   methods: {
     setNotesArray() {
-      const token = localStorage.getItem('token');
-      if (token) {
-        this.notesService.getListNotes(token).then((res) => {
-          console.log('res setNotesArray',res);
-          this.arrDisplayNotes = [...res.data];
-        });
-      }
+      this.notesService.getListNotes().then((res) => {
+        this.arrDisplayNotes = [...res.data];
+      });
     },
     deleteNote(id: number) {
-      console.log('id',id);
-      const token = localStorage.getItem('token');
-      if (token) {
-        this.notesService.deleteNote(id, token).then(() => {
-          this.setNotesArray();
-        })
-      }
+      this.notesService.deleteNote(id).then(() => {
+        this.setNotesArray();
+      })
     },
     getInfoUser() {
-      const token = localStorage.getItem('token');
-      if (token) {
-        this.authService.getInfoUser(token).then((res) => {
-          this.email = res.data.email;
-        })
-      }
-    },
+      this.authService.getInfoUser().then((res) => {
+        this.email = res.data.email;
+      })
+    }
   },
-  mounted() {
+  beforeMount() {
     this.getInfoUser();
     this.setNotesArray();
   }

@@ -2,7 +2,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import {createRouter, createWebHistory} from "vue-router";
 import MainPage from "@/components/MainPage/MainPage.vue";
-import SheetOfNotesPage from "@/components/SheetOfNotesPage/ShhetOfNotesPage.vue";
+import SheetOfNotesPage from "@/components/SheetOfNotesPage/SheetOfNotesPage.vue";
+
+// Use interceptors everywhere
+import "./interceptors"
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -18,4 +21,5 @@ export const router = createRouter({
             component: SheetOfNotesPage
         },
     ]});
+
 createApp(App).use(router).mount('#app')

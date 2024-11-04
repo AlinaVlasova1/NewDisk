@@ -7,33 +7,33 @@ import {RegistrationService} from "@/services/registration-service";
 
 export default defineComponent({
   name: "RegistrationPage",
-  props: ['triggeredRegistrationIs', 'triggeredAuthorizationIs'],
+  props: ['isTriggeredRegistration', 'isTriggeredAuthorization'],
   data() {
     return {
       email: '' as string,
       password: '' as string,
       passwordRepeat: '' as string,
-      errorIs: false as boolean,
+      errors: [] as string[],
       registrationService: new RegistrationService(),
       typeInputPassword: 'password' as string,
+      isDisabled: false as boolean,
     }
   },
   methods: {
-    registrationUser() {
+    register() {
+      this.isDisabled = true;
       const body = new RegistrationModel(this.email, this.password, this.passwordRepeat);
-      this.registrationService.doRegistrationUser(body).then(() => {
-        this.$emit('triggeredAuthorizationIs');
-        this.$emit('triggeredRegistrationIs')
-      }).catch(() => {
-        this.errorIs = true;
+      this.registrationService.register(body).then(() => {
+        this.$emit('isTriggeredAuthorization');
+        this.$emit('isTriggeredRegistration');
+        this.isDisabled = false;
+      }).catch((err) => {
+        this.errors = err.response.data.message.join(';');
+        this.isDisabled = false;
       })
     },
     changeTypePassword() {
-      if (this.typeInputPassword === 'password') {
-        this.typeInputPassword = 'text';
-      } else {
-        this.typeInputPassword = 'password';
-      }
+      this.typeInputPassword = (this.typeInputPassword === 'password') ? 'text' : 'password';
     }
   },
 })
@@ -42,7 +42,7 @@ export default defineComponent({
 <template>
   <div class="pop-up montserrat">
     <div class="registration">
-      <button class="circle-btn-with-icon" @click="$emit('triggeredRegistrationIs')">
+      <button class="circle-btn-with-icon" @click="$emit('isTriggeredRegistration')">
         <img src="../../assets/cross.svg" alt="cross"/>
       </button>
       <h1 class="title-pop-up">Регистрация</h1>
@@ -72,13 +72,13 @@ export default defineComponent({
         <div class="registration-block">
           <div class="question">
             <span class="gray">У вас есть аккаунт?</span>
-            <span class="green" @click="$emit('triggeredAuthorizationIs'); $emit('triggeredRegistrationIs')">
+            <span class="green" @click="$emit('isTriggeredAuthorization'); $emit('isTriggeredRegistration')">
               Войдите
             </span>
           </div>
-          <button class="btn-green btn-registration" @click="registrationUser()">Зарегистрироваться</button>
+          <button class="btn-green btn-registration" :disabled="isDisabled" @click="register()">Зарегистрироваться</button>
         </div>
-        <div class="error" v-if="errorIs">Невалидный email или пароль</div>
+        <div class="error" v-if="errors.length > 0">{{errors}}</div>
       </div>
     </div>
   </div>

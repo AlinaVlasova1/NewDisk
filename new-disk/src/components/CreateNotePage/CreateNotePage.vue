@@ -1,8 +1,8 @@
 <script lang="ts">
 
 import {defineComponent} from "vue";
-import {NoteService} from "@/services/notes-service";
-import {CreatedNote} from "@/models/note-models";
+import {NoteService} from "@/services/note-service";
+import {NoteCreationModel} from "@/models/note-models";
 
 export default defineComponent({
   name: "CreateNotePage",
@@ -18,15 +18,12 @@ export default defineComponent({
   methods: {
     createNote() {
       this.disabledBtnIs = true;
-      const body = new CreatedNote(this.title, this.content);
-      const token = localStorage.getItem('token');
-      if (token) {
-        this.noteService.createNote(body, token).then(() => {
-          this.disabledBtnIs = false;
-          this.$emit('triggeredCreateNoteIs');
-          this.$emit('createdNote');
-        })
-      }
+      const body = new NoteCreationModel(this.title, this.content);
+      this.noteService.createNote(body).then(() => {
+        this.disabledBtnIs = false;
+        this.$emit('triggeredCreateNoteIs');
+        this.$emit('createdNote');
+      })
     }
   }
 })
@@ -44,12 +41,12 @@ export default defineComponent({
         <form class="form">
           <div class="field">
             <label for="title">Название заметки</label>
-            <input v-model="title" placeholder="Введите название">
+            <input v-model="title" placeholder="Введите название" :maxlength="100">
             <span>{{title.length}}/100</span>
           </div>
           <div class="field">
             <label for="title">Текст заметки</label>
-            <textarea  v-model="content" placeholder="Введите текст"></textarea>
+            <textarea  v-model="content" placeholder="Введите текст" :maxlength="255"></textarea>
             <span>{{content.length}}/255</span>
 <!--            255 так как ошибка с сервера приходит-->
           </div>
