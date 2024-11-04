@@ -8,7 +8,7 @@ import SheetOfNotesPage from "@/components/SheetOfNotesPage/SheetOfNotesPage.vue
 import "./interceptors"
 
 export const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(process.env.BASE_URL),
     routes: [
         {
             path: "/",
