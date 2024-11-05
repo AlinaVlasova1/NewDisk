@@ -216,6 +216,11 @@ export default defineComponent({
     border: none;
   }
 
+  .btn-registration:disabled {
+    background-color: rgba(157, 165, 175, 1);
+    color:  rgba(177, 201, 9, 1);
+  }
+
   .error {
     background-color: rgba(255, 116, 97, 0.1);
     color: rgba(255, 116, 97, 1);

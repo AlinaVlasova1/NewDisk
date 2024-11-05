@@ -191,6 +191,11 @@ export default defineComponent({
     border: none;
   }
 
+  .btn-add:disabled {
+    background-color: rgba(157, 165, 175, 1);
+    color:  rgba(177, 201, 9, 1);
+  }
+
 }
 
 
